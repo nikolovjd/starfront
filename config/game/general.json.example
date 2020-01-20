@@ -1,0 +1,7 @@
+{
+  "base": {
+    "cost": 50,
+    "multiplier": 1.5,
+    "maxQueueLength": 20
+  }
+}

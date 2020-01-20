@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
+import { ITask } from '../types';
 
 @Injectable()
 export class SchedulerService {
-  private taskQueue: Task[] = [];
-  private taskManagers: Map<string, (task: Task) => void> = new Map();
+  private taskQueue: ITask[] = [];
+  private taskManagers: Map<string, (task: ITask) => void> = new Map();
   private tickCron: CronJob;
 
   constructor() {
@@ -12,18 +13,18 @@ export class SchedulerService {
     this.tickCron.start();
   }
 
-  public addTask(task: Task) {
+  public addTask(task: ITask) {
     this.insertTask(task);
   }
 
   public addTaskResolver(
-    taskManager: (task: Task) => void,
+    taskManager: (task: ITask) => void,
     taskType: string,
   ): void {
     this.taskManagers.set(taskType, taskManager);
   }
 
-  private insertTask(task: Task): void {
+  private insertTask(task: ITask): void {
     const insertIndex = this.findInsertIndex(task);
 
     if (insertIndex >= this.taskQueue.length) {
@@ -33,16 +34,15 @@ export class SchedulerService {
     }
   }
 
-  private removeTask(task: Task) {
+  private removeTask(task: ITask) {
     const deleteIndex = this.taskQueue.findIndex(t => t.id === task.id);
     this.taskQueue.splice(deleteIndex, 1);
   }
 
-  private findInsertIndex(task: Task): number {
+  private findInsertIndex(task: ITask): number {
     let beginning = 0;
     let end = this.taskQueue.length;
-    // tslint:disable-next-line:no-bitwise
-    let pivot = ~~(this.taskQueue.length / 2);
+    let pivot = Math.floor(this.taskQueue.length / 2);
 
     const time = task.end.getTime();
 
@@ -53,16 +53,14 @@ export class SchedulerService {
         } else {
           end = pivot - 1;
         }
-        // tslint:disable-next-line:no-bitwise
-        pivot = beginning + ~~((end - beginning) / 2);
+        pivot = beginning + Math.floor((end - beginning) / 2);
       } else {
         if (pivot !== beginning) {
           beginning = pivot;
         } else {
           beginning = pivot + 1;
         }
-        // tslint:disable-next-line:no-bitwise
-        pivot = beginning + ~~((end - beginning) / 2);
+        pivot = beginning + Math.floor((end - beginning) / 2);
       }
     }
 
@@ -94,10 +92,10 @@ export class SchedulerService {
     }
   }
 
-  private getTasksForTick(): Task[] {
+  private getTasksForTick(): ITask[] {
     const time = Date.now();
 
-    const tasks: Task[] = [];
+    const tasks: ITask[] = [];
 
     for (const task of this.taskQueue) {
       if (task.end.getTime() <= time) {

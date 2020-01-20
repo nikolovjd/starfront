@@ -1,0 +1,203 @@
+{
+    "energy": {
+      "baseCost": 2,
+      "requirements": {
+        "researchLabs": 1,
+        "technologies": []
+      }
+    },
+    "computer": {
+      "baseCost": 2,
+      "requirements": {
+        "researchLabs": 1,
+        "technologies": []
+      }
+    },
+    "armour": {
+      "baseCost": 4,
+      "requirements": {
+        "researchLabs": 2,
+        "technologies": []
+      }
+    },
+    "laser": {
+      "baseCost": 4,
+      "requirements": {
+        "researchLabs": 2,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 2
+          }
+        ]
+      }
+    },
+    "missiles": {
+      "baseCost": 8,
+      "requirements": {
+        "researchLabs": 4,
+        "technologies": [
+          {
+            "technology": "computer",
+            "level": 4
+          }
+        ]
+      }
+    },
+    "stellarDrive": {
+      "baseCost": 16,
+      "requirements": {
+        "researchLabs": 5,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 6
+          }
+        ]
+      }
+    },
+    "plasma": {
+      "baseCost": 32,
+      "requirements": {
+        "researchLabs": 6,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 6
+          }
+        ]
+      }
+    },
+    "warpDrive": {
+      "baseCost": 64,
+      "requirements": {
+        "researchLabs": 8,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 8
+          },
+          {
+            "technology": "stellarDrive",
+            "level": 4
+          }
+        ]
+      }
+    },
+    "shielding": {
+      "baseCost": 128,
+      "requirements": {
+        "researchLabs": 10,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 10
+          }
+        ]
+      }
+    },
+    "ion": {
+      "baseCost": 256,
+      "requirements": {
+        "researchLabs": 12,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 12
+          },
+          {
+            "technology": "laser",
+            "level": 10
+          }
+        ]
+      }
+    },
+    "photon": {
+      "baseCost": 1024,
+      "requirements": {
+        "researchLabs": 16,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 16
+          },
+          {
+            "technology": "plasma",
+            "level": 8
+          }
+        ]
+      }
+    },
+    "artificialIntelligence": {
+      "baseCost": 2048,
+      "requirements": {
+        "researchLabs": 18,
+        "technologies": [
+          {
+            "technology": "computer",
+            "level": 20
+          }
+        ]
+      }
+    },
+    "disruptor": {
+      "baseCost": 4096,
+      "requirements": {
+        "researchLabs": 20,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 20
+          },
+          {
+            "technology": "laser",
+            "level": 18
+          }
+        ]
+      }
+    },
+    "cybernetics": {
+      "baseCost": 8192,
+      "requirements": {
+        "researchLabs": 22,
+        "technologies": [
+          {
+            "technology": "artificialIntelligence",
+            "level": 6
+          }
+        ]
+      }
+    },
+    "tachyonCommunications": {
+      "baseCost": 32768,
+      "requirements": {
+        "researchLabs": 24,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 24
+          },
+          {
+            "technology": "computer",
+            "level": 24
+          }
+        ]
+      }
+    },
+    "antiGravity": {
+      "baseCost": 100000,
+      "requirements": {
+        "researchLabs": 26,
+        "technologies": [
+          {
+            "technology": "energy",
+            "level": 26
+          },
+          {
+            "technology": "computer",
+            "level": 26
+          }
+        ]
+      }
+    }
+}

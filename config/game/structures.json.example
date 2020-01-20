@@ -1,0 +1,545 @@
+{
+  "urbanStructures": {
+    "baseCost": 1,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 0,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "population",
+        "type": "base",
+        "fromBase": "fertility"
+      }
+    ]
+  },
+  "solarPlants": {
+    "baseCost": 1,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "energy",
+        "type": "base",
+        "fromBase": "solar"
+      }
+    ]
+  },
+  "gasPlants": {
+    "baseCost": 1,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "energy",
+        "type": "base",
+        "fromBase": "gas"
+      }
+    ]
+  },
+  "fusionPlants": {
+    "baseCost": 20,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "energy",
+          "level": 6
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "energy",
+        "type": "value",
+        "value": 4
+      }
+    ]
+  },
+  "antimatterPlants": {
+    "baseCost": 2000,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "energy",
+          "level": 20
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "energy",
+        "type": "value",
+        "value": 10
+      }
+    ]
+  },
+  "orbitalPlants": {
+    "baseCost": 40000,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 1,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "energy",
+          "level": 25
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "energy",
+        "type": "value",
+        "value": 12
+      }
+    ]
+  },
+  "researchLabs": {
+    "baseCost": 2,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "research",
+        "type": "value",
+        "value": 6
+      }
+    ]
+  },
+  "metalRefineries": {
+    "baseCost": 1,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "base",
+        "fromBase": "metal"
+      },
+      {
+        "stat": "construction",
+        "type": "base",
+        "fromBase": "metal"
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 1
+      }
+    ]
+  },
+  "crystalMines": {
+    "baseCost": 2,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "economy",
+        "type": "base",
+        "fromBase": "crystal"
+      }
+    ]
+  },
+  "roboticFactories": {
+    "baseCost": 5,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 2
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "value",
+        "value": 2
+      },
+      {
+        "stat": "construction",
+        "type": "value",
+        "value": 2
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 1
+      }
+    ]
+  },
+  "shipyards": {
+    "baseCost": 5,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "value",
+        "value": 2
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 1
+      }
+    ]
+  },
+  "orbitalShipyards": {
+    "baseCost": 10000,
+    "requirements": {
+      "stats": {
+        "energy": 12,
+        "population": 1,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "cybernetics",
+          "level": 2
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "value",
+        "value": 8
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 2
+      }
+    ]
+  },
+  "spaceports": {
+    "baseCost": 5,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": []
+    },
+    "stats": [
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 2
+      }
+    ]
+  },
+  "commandCenters": {
+    "baseCost": 20,
+    "requirements": {
+      "stats": {
+        "energy": 1,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 6
+        }
+      ]
+    },
+    "stats": []
+  },
+  "naniteFactories": {
+    "baseCost": 80,
+    "requirements": {
+      "stats": {
+        "energy": 2,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 10
+        },
+        {
+          "technology": "laser",
+          "level": 8
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "value",
+        "value": 4
+      },
+      {
+        "stat": "construction",
+        "type": "value",
+        "value": 4
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 2
+      }
+    ]
+  },
+  "androidFactories": {
+    "baseCost": 1000,
+    "requirements": {
+      "stats": {
+        "energy": 4,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "artificialIntelligence",
+          "level": 4
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "production",
+        "type": "value",
+        "value": 6
+      },
+      {
+        "stat": "construction",
+        "type": "value",
+        "value": 6
+      },
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 2
+      }
+    ]
+  },
+  "economicCenters": {
+    "baseCost": 80,
+    "requirements": {
+      "stats": {
+        "energy": 2,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 10
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 4
+      }
+    ]
+  },
+  "terraform": {
+    "baseCost": 80,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 0,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 10
+        },
+        {
+          "technology": "energy",
+          "level": 10
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "area",
+        "type": "value",
+        "value": 5
+      }
+    ]
+  },
+  "multiLevelPlatforms": {
+    "baseCost": 10000,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 0,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "armour",
+          "level": 22
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "area",
+        "type": "value",
+        "value": 10
+      }
+    ]
+  },
+  "orbitalBase": {
+    "baseCost": 2000,
+    "requirements": {
+      "stats": {
+        "energy": 0,
+        "population": 0,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 20
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "population",
+        "type": "value",
+        "value": 10
+      }
+    ]
+  },
+  "jumpGate": {
+    "baseCost": 5000,
+    "requirements": {
+      "stats": {
+        "energy": 8,
+        "population": 1,
+        "area": 0
+      },
+      "technologies": [
+        {
+          "technology": "warpDrive",
+          "level": 12
+        },
+        {
+          "technology": "energy",
+          "level": 20
+        }
+      ]
+    },
+    "stats": []
+  },
+  "biosphereModification": {
+    "baseCost": 20000,
+    "requirements": {
+      "stats": {
+        "energy": 24,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "computer",
+          "level": 24
+        },
+        {
+          "technology": "energy",
+          "level": 24
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "fertility",
+        "type": "value",
+        "value": 1
+      }
+    ]
+  },
+  "capital": {
+    "baseCost": 15000,
+    "requirements": {
+      "stats": {
+        "energy": 12,
+        "population": 1,
+        "area": 1
+      },
+      "technologies": [
+        {
+          "technology": "tachyonCommunications",
+          "level": 1
+        }
+      ]
+    },
+    "stats": [
+      {
+        "stat": "economy",
+        "type": "value",
+        "value": 10
+      }
+    ]
+  }
+}
