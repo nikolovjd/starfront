@@ -27,6 +27,9 @@ export class Empire extends BaseEntity {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column({ default: 0 })
+  income: number;
+
   // Technologies
   @Column({ default: 0 })
   energy: number;

@@ -20,7 +20,7 @@ import {
 import { gameConfigGeneral, gameConfigStructures } from '../config/gameConfig';
 
 @Injectable()
-export class BuildingService {
+export class BuildingService implements OnModuleInit {
   private stats;
   constructor(
     @InjectConnection() private readonly connection: Connection,
@@ -43,10 +43,15 @@ export class BuildingService {
     transaction?: EntityManager,
   ) {
     if (transaction) {
-      await this.buildBuildingTransaction(baseId, building, transaction);
+      await this.buildBuildingTransaction(
+        baseId,
+        building,
+        transaction,
+        new Date(),
+      );
     } else {
       await this.connection.transaction(async t => {
-        await this.buildBuildingTransaction(baseId, building, t);
+        await this.buildBuildingTransaction(baseId, building, t, new Date());
       });
     }
   }
@@ -80,10 +85,10 @@ export class BuildingService {
     baseId,
     building: Buildings,
     transaction: EntityManager,
-    start?: Date,
+    start: Date,
+    catchup = false,
   ) {
-    const startTime = start || new Date();
-    startTime.setMilliseconds(0);
+    start.setMilliseconds(0);
 
     const base = await transaction
       .getRepository(Base)
@@ -109,8 +114,8 @@ export class BuildingService {
 
     const task = transaction.getRepository(Task).create({
       type: 'building',
-      start: startTime,
-      end: this.getEndTime(base, startTime, cost),
+      start,
+      end: this.getEndTime(base, start, cost),
       status: TaskStatus.IN_PROGRESS,
     });
 
@@ -124,11 +129,39 @@ export class BuildingService {
     base.buildingTask = task;
     await transaction.save(base);
 
-    this.scheduler.addTask(task);
+    if (!catchup) {
+      this.scheduler.addTask(task);
+    }
+
+    return task;
   }
 
-  private async finishBuilding(finishTask: Task) {
-    await this.connection.transaction(async transaction => {
+  private async finishBuilding(finishTask: Task, catchup = false) {
+    await this.finishTask(finishTask);
+
+    return this.connection.transaction(async transaction => {
+      const base = await transaction
+        .getRepository(Base)
+        .findOne(finishTask.data.baseId, {
+          relations: ['empire', 'buildingTask'],
+        });
+
+      if (base.buildingQueue.length) {
+        const building = base.buildingQueue.shift();
+        await transaction.save(base);
+        return this.buildBuildingTransaction(
+          finishTask.data.baseId,
+          building,
+          transaction,
+          finishTask.end,
+          catchup,
+        );
+      }
+    });
+  }
+
+  private async finishTask(finishTask: Task) {
+    return this.connection.transaction(async transaction => {
       const task = await transaction.getRepository(Task).findOne(finishTask.id);
 
       if (task.status !== TaskStatus.IN_PROGRESS) {
@@ -146,25 +179,6 @@ export class BuildingService {
 
       await Promise.all([updateBase, finish]);
     });
-
-    await this.connection.transaction(async transaction => {
-      const base = await transaction
-        .getRepository(Base)
-        .findOne(finishTask.data.baseId, {
-          relations: ['empire', 'buildingTask'],
-        });
-
-      if (base.buildingQueue.length) {
-        const building = base.buildingQueue.shift();
-        await this.buildBuildingTransaction(
-          finishTask.data.baseId,
-          building,
-          transaction,
-          finishTask.end,
-        );
-        await transaction.save(base);
-      }
-    });
   }
 
   private calculateCost(building: Buildings, level: number) {
@@ -176,7 +190,7 @@ export class BuildingService {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(start.getTime() + cost * 1000);
+    return new Date(start.getTime() + 1 * 1000);
   }
 
   async onModuleInit() {
@@ -193,7 +207,23 @@ export class BuildingService {
       .getMany();
 
     for (const task of finishedTasks) {
-      await this.finishBuilding(task);
+      try {
+        let newTask = await this.finishBuilding(task, true);
+        while (newTask) {
+          if (newTask.end <= date) {
+            newTask = await this.finishBuilding(newTask, true);
+          } else {
+            this.scheduler.addTask(newTask);
+            break;
+          }
+        }
+      } catch (err) {
+        if (err instanceof NotEnoughCreditsError) {
+          // Nothing
+        } else {
+          throw err;
+        }
+      }
     }
 
     const pendingTasks = await this.taskRepository
