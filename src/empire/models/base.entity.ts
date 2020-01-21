@@ -1,9 +1,11 @@
 import {
+  AfterLoad,
   BaseEntity,
   Check,
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,7 +13,10 @@ import {
 import { Empire } from './empire.entity';
 import { Buildings } from '../../types';
 import { Task } from '../../task/models/task.entity';
-import { gameConfigGeneral } from '../../config/gameConfig';
+import {
+  gameConfigGeneral,
+  gameConfigStructures,
+} from '../../config/gameConfig';
 
 @Entity()
 @Check(
@@ -25,6 +30,7 @@ export class Base extends BaseEntity {
   @ManyToOne(
     type => Empire,
     empire => empire.bases,
+    { eager: true },
   )
   empire: Empire;
 
@@ -36,6 +42,56 @@ export class Base extends BaseEntity {
   @OneToOne(type => Task)
   @JoinColumn()
   public buildingTask: Task;
+
+  // -- STATS --
+  @Column({ default: 75 })
+  public baseArea: number;
+
+  @Column({ default: 6 })
+  public baseFertility: number;
+
+  @Column({ default: 3 })
+  public solar: number;
+
+  @Column({ default: 1 })
+  public gas: number;
+
+  @Column({ default: 3 })
+  public metal: number;
+
+  @Column({ default: 3 })
+  public crystal: number;
+
+  @Column({ default: 0 })
+  public economy: number;
+
+  @Column({ default: 0 })
+  public income: number;
+
+  // -- COMPUTED STATS --
+  public area: number;
+  public usedArea: number;
+  public population: number;
+  public usedPopulation: number;
+  public energy: number;
+  public usedEnergy: number;
+  public fertility: number;
+  public construction: number;
+  public production: number;
+
+  @AfterLoad()
+  getComputedStats() {
+    // NOTE: fertility NEEDS to be first since its used for calculating population
+    this.fertility = this.calculateTotalStat('fertility');
+    this.area = this.calculateTotalStat('area');
+    this.usedArea = this.calculateUsedStat('area');
+    this.population = this.calculateTotalStat('population');
+    this.usedPopulation = this.calculateUsedStat('population');
+    this.energy = this.calculateTotalStat('energy');
+    this.usedEnergy = this.calculateUsedStat('energy');
+    this.construction = this.calculateTotalStat('construction');
+    this.production = this.calculateTotalStat('production');
+  }
 
   // -- BUILDINGS ---
   @Column({ default: 1 })
@@ -106,4 +162,60 @@ export class Base extends BaseEntity {
 
   @Column({ default: 0 })
   public [Buildings.CAPITAL]: number;
+
+  private calculateTotalStat(
+    s:
+      | 'area'
+      | 'population'
+      | 'energy'
+      | 'fertility'
+      | 'construction'
+      | 'production',
+  ) {
+    let total = 0;
+
+    for (const building of Object.values(Buildings)) {
+      for (const stat of gameConfigStructures[building].stats) {
+        if (stat.stat === s) {
+          if (stat.type === 'value') {
+            total += stat.value * this[building];
+          } else {
+            total += this[stat.fromBase] * this[building];
+          }
+        }
+      }
+    }
+
+    switch (s) {
+      case 'area':
+        total += this.baseArea;
+        break;
+      case 'energy':
+        total += 2; // TODO: config
+        total *= Math.round(1 + 0.05 * this.empire.energy);
+        break;
+      case 'population':
+        break;
+      case 'fertility':
+        total += this.baseFertility;
+        break;
+      case 'construction':
+        total += gameConfigGeneral.base.startingConstruction;
+    }
+
+    return total;
+  }
+
+  private calculateUsedStat(s: 'energy' | 'population' | 'area') {
+    let used = 0;
+    for (const building of Object.values(Buildings)) {
+      used +=
+        this[building] * gameConfigStructures[building].requirements.stats[s];
+    }
+
+    return used;
+  }
+
+  // -- DEFENSES ---
+  // TODO:
 }

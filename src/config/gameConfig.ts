@@ -37,6 +37,7 @@ interface GameConfigBase {
   cost: number;
   multiplier: number;
   maxQueueLength: number;
+  startingConstruction: number;
 }
 
 interface GameConfigGeneral {

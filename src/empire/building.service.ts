@@ -56,29 +56,42 @@ export class BuildingService implements OnModuleInit {
     }
   }
 
-  public async queueBuilding(baseId, building: Buildings) {
-    await this.connection.transaction(async transaction => {
-      const base = await transaction
-        .getRepository(Base)
-        .findOne(baseId, { relations: ['empire', 'buildingTask'] });
+  public async getBase(baseId: number) {
+    return this.baseRepository.findOne(baseId);
+  }
 
-      if (base.buildingQueue.length >= gameConfigGeneral.base.maxQueueLength) {
+  public async queueBuilding(baseId: number, building: Buildings) {
+    try {
+      await this.baseRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          // @ts-ignore
+          buildingQueue: () => `array_append("buildingQueue", '${building}')`,
+        })
+        .where({ id: baseId })
+        .execute();
+    } catch (err) {
+      if (err.message.includes('violates check constraint')) {
         throw new BuildingQueueFullError();
       }
 
-      try {
-        await transaction.update(Base, base.id, {
-          // @ts-ignore
-          buildingQueue: () => `array_append("buildingQueue", '${building}')`,
-        });
-      } catch (err) {
-        if (err.message.includes('violates check constraint')) {
-          throw new BuildingQueueFullError();
-        }
+      throw err;
+    }
+  }
 
-        throw err;
-      }
-    });
+  public async unqueueBuilding(baseId: number, i: number) {
+    await this.baseRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        // @ts-ignore
+        buildingQueue: () =>
+          // Postgres arrays are 1 indexed
+          `"buildingQueue"[:${i}] || "buildingQueue"[${i + 2}:]`,
+      })
+      .where({ id: baseId })
+      .execute();
   }
 
   private async buildBuildingTransaction(
@@ -191,6 +204,18 @@ export class BuildingService implements OnModuleInit {
 
   private getEndTime(base: Base, start: Date, cost: number) {
     return new Date(start.getTime() + 1 * 1000);
+  }
+
+  private getUpdateStats(building: Buildings) {
+    const stats = gameConfigStructures[building].stats;
+    const update: any = {};
+
+    for (const stat of stats) {
+      const value = stat.type === 'value' ? stat.value : `"${stat.fromBase}"`;
+      update[stat.stat] = () => `"${stat.stat}" + ${value}`;
+    }
+
+    return update;
   }
 
   async onModuleInit() {
