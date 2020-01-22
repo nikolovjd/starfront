@@ -42,6 +42,7 @@ interface GameConfigBase {
 
 interface GameConfigGeneral {
   base: GameConfigBase;
+  incomeCron: string;
 }
 
 type GameConfigStructures = {

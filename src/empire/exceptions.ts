@@ -14,6 +14,13 @@ export class NotEnoughCreditsError extends Error {
   }
 }
 
+export class RequirementsNotMetError extends Error {
+  constructor() {
+    super('Requirements not met');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
 export class BuildingQueueFullError extends Error {
   constructor() {
     super('Building queue full');

@@ -16,6 +16,7 @@ import {
   BuildingAlreadyInProgressError,
   BuildingQueueFullError,
   NotEnoughCreditsError,
+  RequirementsNotMetError,
 } from './exceptions';
 import { gameConfigGeneral, gameConfigStructures } from '../config/gameConfig';
 
@@ -37,23 +38,10 @@ export class BuildingService implements OnModuleInit {
     this.scheduler.addTaskResolver(this.finishBuilding, 'building');
   }
 
-  public async buildBuilding(
-    baseId,
-    building: Buildings,
-    transaction?: EntityManager,
-  ) {
-    if (transaction) {
-      await this.buildBuildingTransaction(
-        baseId,
-        building,
-        transaction,
-        new Date(),
-      );
-    } else {
-      await this.connection.transaction(async t => {
-        await this.buildBuildingTransaction(baseId, building, t, new Date());
-      });
-    }
+  public async buildBuilding(baseId, building: Buildings) {
+    await this.connection.transaction('REPEATABLE READ', async t => {
+      await this.buildBuildingTransaction(baseId, building, t, new Date());
+    });
   }
 
   public async getBase(baseId: number) {
@@ -62,15 +50,21 @@ export class BuildingService implements OnModuleInit {
 
   public async queueBuilding(baseId: number, building: Buildings) {
     try {
-      await this.baseRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          // @ts-ignore
-          buildingQueue: () => `array_append("buildingQueue", '${building}')`,
-        })
-        .where({ id: baseId })
-        .execute();
+      await this.connection.transaction(
+        'REPEATABLE READ',
+        async transaction => {
+          const base = await transaction
+            .getRepository(Base)
+            .findOne(baseId, { relations: ['buildingTask'] });
+          const queue = base.buildingQueue;
+          queue.push(building);
+          if (this.verifyQueue(base, queue)) {
+            await transaction.save(base);
+          } else {
+            throw new RequirementsNotMetError();
+          }
+        },
+      );
     } catch (err) {
       if (err.message.includes('violates check constraint')) {
         throw new BuildingQueueFullError();
@@ -115,6 +109,15 @@ export class BuildingService implements OnModuleInit {
     const level = base[building] + 1;
     const cost = this.calculateCost(building, level);
 
+    const requirements = gameConfigStructures[building].requirements.stats;
+    if (
+      base.energy - base.usedEnergy - requirements.energy < 0 ||
+      base.population - base.usedPopulation - requirements.population < 0 ||
+      base.area - base.usedArea - requirements.area < 0
+    ) {
+      throw new RequirementsNotMetError();
+    }
+
     try {
       await transaction.decrement(Empire, { id: empire.id }, 'credits', cost);
     } catch (err) {
@@ -152,7 +155,7 @@ export class BuildingService implements OnModuleInit {
   private async finishBuilding(finishTask: Task, catchup = false) {
     await this.finishTask(finishTask);
 
-    return this.connection.transaction(async transaction => {
+    return this.connection.transaction('REPEATABLE READ', async transaction => {
       const base = await transaction
         .getRepository(Base)
         .findOne(finishTask.data.baseId, {
@@ -181,9 +184,24 @@ export class BuildingService implements OnModuleInit {
         throw new Error('Not in progress');
       }
 
+      const economyAndIncome: any = {};
+      const stats = gameConfigStructures[finishTask.data.building].stats;
+      const eco = stats.find(stat => stat.stat === 'economy');
+      if (eco) {
+        economyAndIncome.economy = () =>
+          `"economy" + ${
+            eco.type === 'value' ? eco.value : `"${eco.fromBase}"`
+          }`;
+        economyAndIncome.income = () =>
+          `"income" + ${
+            eco.type === 'value' ? eco.value : `"${eco.fromBase}"`
+          }`;
+      }
+
       const updateBase = transaction.update(Base, task.data.baseId, {
         buildingTask: null,
         [task.data.building]: () => `"${task.data.building}" + 1`,
+        ...economyAndIncome,
       });
 
       const finish = transaction.update(Task, task.id, {
@@ -203,7 +221,26 @@ export class BuildingService implements OnModuleInit {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(start.getTime() + 1 * 1000);
+    return new Date(
+      start.getTime() + (cost / base.construction) * 60 * 60 * 1000,
+    );
+  }
+
+  public verifyQueue(base: Base, queue: Buildings[]) {
+    const clone = this.baseRepository.create(base);
+    if (base.buildingTask) {
+      clone[base.buildingTask.data.building]++;
+    }
+    for (const building of queue) {
+      clone[building]++;
+    }
+    clone.getComputedStats();
+
+    return !(
+      clone.energy - clone.usedEnergy < 0 ||
+      clone.area - clone.usedArea < 0 ||
+      clone.population - clone.usedPopulation < 0
+    );
   }
 
   private getUpdateStats(building: Buildings) {

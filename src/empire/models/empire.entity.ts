@@ -11,6 +11,7 @@ import { Base } from './base.entity';
 
 @Entity()
 @Check('"credits" >= 0')
+@Check('"baseDiscount" >= 0')
 export class Empire extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -29,6 +30,9 @@ export class Empire extends BaseEntity {
 
   @Column({ default: 0 })
   income: number;
+
+  @Column({ default: 0 })
+  baseDiscount: number;
 
   // Technologies
   @Column({ default: 0 })

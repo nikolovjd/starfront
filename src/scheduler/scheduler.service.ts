@@ -5,7 +5,7 @@ import { ITask } from '../types';
 @Injectable()
 export class SchedulerService {
   private taskQueue: ITask[] = [];
-  private taskManagers: Map<string, (task: ITask) => void> = new Map();
+  private taskManagers: Map<string, (task: ITask) => Promise<any>> = new Map();
   private tickCron: CronJob;
 
   constructor() {
@@ -18,7 +18,7 @@ export class SchedulerService {
   }
 
   public addTaskResolver(
-    taskManager: (task: ITask) => void,
+    taskManager: (task: ITask) => Promise<any>,
     taskType: string,
   ): void {
     this.taskManagers.set(taskType, taskManager);
@@ -87,7 +87,11 @@ export class SchedulerService {
     }
 
     for (const task of tickTasks) {
-      this.taskManagers.get(task.type)(task);
+      this.taskManagers
+        .get(task.type)(task)
+        .catch(err => {
+          console.log(err);
+        });
       this.removeTask(task);
     }
   }
