@@ -246,7 +246,7 @@ export class ResearchService implements OnModuleInit {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(start.getTime() + 1000);
+    return new Date(start.getTime() + (cost / base.research) * 60 * 60 * 1000);
   }
 
   async onModuleInit() {

@@ -137,6 +137,10 @@ export class Base extends BaseEntity {
   @ApiProperty()
   public production: number;
 
+  @Expose()
+  @ApiProperty()
+  public research: number;
+
   @AfterLoad()
   getComputedStats() {
     // NOTE: fertility NEEDS to be first since its used for calculating population
@@ -149,6 +153,7 @@ export class Base extends BaseEntity {
     this.usedEnergy = this.calculateUsedStat('energy');
     this.construction = this.calculateTotalStat('construction');
     this.production = this.calculateTotalStat('production');
+    this.research = this.calculateTotalStat('research');
   }
 
   // -- BUILDINGS ---
@@ -274,7 +279,8 @@ export class Base extends BaseEntity {
       | 'energy'
       | 'fertility'
       | 'construction'
-      | 'production',
+      | 'production'
+      | 'research',
   ) {
     let total = 0;
 
