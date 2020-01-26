@@ -1,0 +1,12 @@
+{
+  "type": "postgres",
+  "host": "starfront-db",
+  "port": 5432,
+  "username": "dev",
+  "password": "dev",
+  "database": "starfront",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "migrations": ["dist/components/**/migration/*{.ts,.js}"],
+  "synchronize": true,
+  "logging": true
+}
