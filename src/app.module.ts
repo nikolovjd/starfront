@@ -7,6 +7,8 @@ import { EmpireModule } from './empire/empire.module';
 import { TaskModule } from './task/task.module';
 import { IncomeModule } from './income/income.module';
 import { BaseController } from './empire/base.controller';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { BaseController } from './empire/base.controller';
     EmpireModule,
     TaskModule,
     IncomeModule,
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController, BaseController],
   providers: [AppService],
