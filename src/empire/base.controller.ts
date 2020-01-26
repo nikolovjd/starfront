@@ -16,11 +16,15 @@ import { ApiOkResponse, ApiConflictResponse } from '@nestjs/swagger';
 import { Base } from './models/base.entity';
 import { DequeueBuildingRequestDto } from './request/dequeue-building-request.dto';
 import { DowngradeBuildingRequestDto } from './request/downgrade-building-request.dto';
+import { ResearchService } from './research.service';
 
 @Controller('base')
 @UseInterceptors(ClassSerializerInterceptor)
 export class BaseController {
-  constructor(private readonly buildingService: BuildingService) {}
+  constructor(
+    private readonly buildingService: BuildingService,
+    private readonly researchService: ResearchService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ type: Base, isArray: true })

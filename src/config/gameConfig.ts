@@ -51,5 +51,20 @@ type GameConfigStructures = {
   [key in Buildings]?: StructureStats;
 };
 
+interface TechnologyRequirements {
+  researchLabs: number;
+  technologies: TechnologyRequirement[];
+}
+
+interface TechnologyStats {
+  baseCost: number;
+  requirements: TechnologyRequirements;
+}
+
+type GameConfigTechnologies = {
+  [key in Technologies]?: TechnologyStats;
+};
+
 export const gameConfigStructures = structures as GameConfigStructures;
 export const gameConfigGeneral = general as GameConfigGeneral;
+export const gameConfigTechnologies = technologies as GameConfigTechnologies;

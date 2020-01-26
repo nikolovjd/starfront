@@ -23,6 +23,13 @@ export class RequirementsNotMetError extends ConflictException {
   }
 }
 
+export class TechnologyAlreadyInResearchError extends ConflictException {
+  constructor() {
+    super('Technology already in research');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
 export class BuildingQueueFullError extends ConflictException {
   constructor() {
     super('Building queue full');

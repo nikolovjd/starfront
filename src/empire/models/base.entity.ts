@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Empire } from './empire.entity';
-import { Buildings } from '../../types';
+import { Buildings, Technologies } from '../../types';
 import { Task } from '../../task/models/task.entity';
 import {
   gameConfigGeneral,
@@ -18,6 +18,7 @@ import {
 } from '../../config/gameConfig';
 import { Exclude, Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 
 @Entity()
 @Check(
@@ -46,10 +47,21 @@ export class Base extends BaseEntity {
   public buildingQueue: Buildings[];
 
   @Expose()
+  @ApiModelProperty()
+  @Column({ type: 'enum', enum: Technologies, array: true, default: [] })
+  public researchQueue: Technologies[];
+
+  @Expose()
   @ApiProperty()
   @OneToOne(type => Task, { eager: true })
   @JoinColumn()
   public buildingTask: Task;
+
+  @Expose()
+  @ApiProperty()
+  @OneToOne(type => Task, { eager: true })
+  @JoinColumn()
+  public researchTask: Task;
 
   // -- STATS --
   @Column({ default: 75 })
