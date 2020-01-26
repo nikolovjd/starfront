@@ -6,8 +6,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { TaskStatus } from '../../types';
+import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
+@Exclude()
 export class Task extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,9 +24,13 @@ export class Task extends BaseEntity {
   @Column()
   start: Date;
 
+  @Expose()
+  @ApiProperty()
   @Column()
   end: Date;
 
+  @Expose()
+  @ApiProperty()
   @Column({ type: 'jsonb' })
   data: any;
 

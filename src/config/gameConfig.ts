@@ -38,6 +38,8 @@ interface GameConfigBase {
   multiplier: number;
   maxQueueLength: number;
   startingConstruction: number;
+  buildingDowngradeRefund: number;
+  buildingCancelRefund: number;
 }
 
 interface GameConfigGeneral {

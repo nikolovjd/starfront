@@ -5,7 +5,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -17,13 +16,18 @@ import {
   gameConfigGeneral,
   gameConfigStructures,
 } from '../../config/gameConfig';
+import { Exclude, Expose } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 @Check(
   `array_length("buildingQueue", 1) <= ${gameConfigGeneral.base.maxQueueLength}`,
 )
 @Check('"urbanStructures" >= 1')
+@Exclude()
 export class Base extends BaseEntity {
+  @Expose()
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -36,10 +40,14 @@ export class Base extends BaseEntity {
 
   // -- TASKS ---
 
+  @Expose()
+  @ApiProperty()
   @Column({ type: 'enum', enum: Buildings, array: true, default: [] })
   public buildingQueue: Buildings[];
 
-  @OneToOne(type => Task)
+  @Expose()
+  @ApiProperty()
+  @OneToOne(type => Task, { eager: true })
   @JoinColumn()
   public buildingTask: Task;
 
@@ -50,33 +58,71 @@ export class Base extends BaseEntity {
   @Column({ default: 6 })
   public baseFertility: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 3 })
   public solar: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 1 })
   public gas: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 3 })
   public metal: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 3 })
   public crystal: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public economy: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public income: number;
 
   // -- COMPUTED STATS --
+  @Expose()
+  @ApiProperty()
   public area: number;
+
+  @Expose()
+  @ApiProperty()
   public usedArea: number;
+
+  @Expose()
+  @ApiProperty()
   public population: number;
+
+  @Expose()
+  @ApiProperty()
   public usedPopulation: number;
+
+  @Expose()
+  @ApiProperty()
   public energy: number;
+
+  @Expose()
+  @ApiProperty()
   public usedEnergy: number;
+
+  @Expose()
+  @ApiProperty()
   public fertility: number;
+
+  @Expose()
+  @ApiProperty()
   public construction: number;
+
+  @Expose()
+  @ApiProperty()
   public production: number;
 
   @AfterLoad()
@@ -94,72 +140,118 @@ export class Base extends BaseEntity {
   }
 
   // -- BUILDINGS ---
+  @Expose()
+  @ApiProperty()
   @Column({ default: 1 })
   public [Buildings.URBAN_STRUCTURES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.SOLAR_PLANTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.GAS_PLANTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.FUSTION_PLANTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ANTIMATTER_PLANTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ORBITAL_PLANTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.RESEARCH_LABS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.METAL_REFINERIES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.CRYSTAL_MINES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ROBOTIC_FACTORIES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.SHIPYARDS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ORBITAL_SHIPYARDS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.SPACEPORTS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.COMMAND_CENTERS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.NANITE_FACTORIES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ANDROID_FACTORIES]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ECONOMIC_CENTERS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.TERRAFORM]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.MULTI_LEVEL_PLATFORMS]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.ORBITAL_BASE]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.JUMP_GATE]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.BIOSPHERE_MODIFICATION]: number;
 
+  @Expose()
+  @ApiProperty()
   @Column({ default: 0 })
   public [Buildings.CAPITAL]: number;
 

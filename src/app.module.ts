@@ -6,6 +6,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
 import { EmpireModule } from './empire/empire.module';
 import { TaskModule } from './task/task.module';
 import { IncomeModule } from './income/income.module';
+import { BaseController } from './empire/base.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { IncomeModule } from './income/income.module';
     TaskModule,
     IncomeModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, BaseController],
   providers: [AppService],
 })
 export class AppModule {}

@@ -15,6 +15,7 @@ import { SchedulerService } from '../scheduler/scheduler.service';
 import {
   BuildingAlreadyInProgressError,
   BuildingQueueFullError,
+  NoBuildingInConstructionError,
   NotEnoughCreditsError,
   RequirementsNotMetError,
 } from './exceptions';
@@ -44,8 +45,63 @@ export class BuildingService implements OnModuleInit {
     });
   }
 
+  public async cancelBuilding(baseId) {
+    await this.connection.transaction('REPEATABLE READ', async t => {
+      const base = await this.baseRepository.findOne(baseId);
+      const task = base.buildingTask;
+      const empire = base.empire;
+      if (task) {
+        task.status = TaskStatus.CANCELLED;
+        base.buildingTask = null;
+        const refund = Math.floor(
+          (this.calculateCost(
+            task.data.building,
+            base[task.data.building] + 1,
+          ) /
+            100) *
+            gameConfigGeneral.base.buildingCancelRefund,
+        );
+        empire.credits += refund;
+        await Promise.all([t.save(base), t.save(task), t.save(empire)]);
+      } else {
+        throw new NoBuildingInConstructionError();
+      }
+    });
+  }
+
+  public async deleteBuilding(baseId, building: Buildings) {
+    try {
+      await this.connection.transaction(
+        'REPEATABLE READ',
+        async transaction => {
+          const base = await transaction.getRepository(Base).findOne(baseId);
+          const empire = base.empire;
+          const originalCost = this.calculateCost(building, base[building]);
+          base[building]--;
+          if (base.buildingTask) {
+            base[base.buildingTask.data.building]++;
+          }
+          // TODO: verify base is not researching if building is lab
+          if (this.verifyBaseIntegrity(base)) {
+            await transaction.save(base);
+            empire.baseDiscount += originalCost;
+            await transaction.save(empire);
+          } else {
+            throw new RequirementsNotMetError();
+          }
+        },
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
+
   public async getBase(baseId: number) {
     return this.baseRepository.findOne(baseId);
+  }
+
+  public async getBasesForEmpireId(empireId: number) {
+    return this.baseRepository.find({ where: { empire: { id: empireId } } });
   }
 
   public async queueBuilding(baseId: number, building: Buildings) {
@@ -53,9 +109,7 @@ export class BuildingService implements OnModuleInit {
       await this.connection.transaction(
         'REPEATABLE READ',
         async transaction => {
-          const base = await transaction
-            .getRepository(Base)
-            .findOne(baseId, { relations: ['buildingTask'] });
+          const base = await transaction.getRepository(Base).findOne(baseId);
           const queue = base.buildingQueue;
           queue.push(building);
           if (this.verifyQueue(base, queue)) {
@@ -97,9 +151,7 @@ export class BuildingService implements OnModuleInit {
   ) {
     start.setMilliseconds(0);
 
-    const base = await transaction
-      .getRepository(Base)
-      .findOne(baseId, { relations: ['empire', 'buildingTask'] });
+    const base = await transaction.getRepository(Base).findOne(baseId);
     const empire = base.empire;
 
     if (base.buildingTask) {
@@ -158,9 +210,7 @@ export class BuildingService implements OnModuleInit {
     return this.connection.transaction('REPEATABLE READ', async transaction => {
       const base = await transaction
         .getRepository(Base)
-        .findOne(finishTask.data.baseId, {
-          relations: ['empire', 'buildingTask'],
-        });
+        .findOne(finishTask.data.baseId);
 
       if (base.buildingQueue.length) {
         const building = base.buildingQueue.shift();
@@ -221,12 +271,10 @@ export class BuildingService implements OnModuleInit {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(
-      start.getTime() + (cost / base.construction) * 60 * 60 * 1000,
-    );
+    return new Date(start.getTime() + 1000);
   }
 
-  public verifyQueue(base: Base, queue: Buildings[]) {
+  private verifyQueue(base: Base, queue: Buildings[]) {
     const clone = this.baseRepository.create(base);
     if (base.buildingTask) {
       clone[base.buildingTask.data.building]++;
@@ -234,25 +282,24 @@ export class BuildingService implements OnModuleInit {
     for (const building of queue) {
       clone[building]++;
     }
-    clone.getComputedStats();
 
-    return !(
-      clone.energy - clone.usedEnergy < 0 ||
-      clone.area - clone.usedArea < 0 ||
-      clone.population - clone.usedPopulation < 0
-    );
+    return this.verifyBaseIntegrity(clone);
   }
 
-  private getUpdateStats(building: Buildings) {
-    const stats = gameConfigStructures[building].stats;
-    const update: any = {};
+  private verifyBaseIntegrity(base: Base) {
+    base.getComputedStats();
 
-    for (const stat of stats) {
-      const value = stat.type === 'value' ? stat.value : `"${stat.fromBase}"`;
-      update[stat.stat] = () => `"${stat.stat}" + ${value}`;
+    for (const building of Object.values(Buildings)) {
+      if (base[building] < 0) {
+        return false;
+      }
     }
 
-    return update;
+    return !(
+      base.energy - base.usedEnergy < 0 ||
+      base.area - base.usedArea < 0 ||
+      base.population - base.usedPopulation < 0
+    );
   }
 
   async onModuleInit() {
