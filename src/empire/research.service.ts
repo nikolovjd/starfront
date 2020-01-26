@@ -12,12 +12,18 @@ import { Base } from './models/base.entity';
 import { Empire } from './models/empire.entity';
 import { Task } from '../task/models/task.entity';
 import { Buildings, TaskStatus, Technologies } from '../types';
-import { gameConfigTechnologies } from '../config/gameConfig';
+import {
+  gameConfigGeneral,
+  gameConfigTechnologies,
+} from '../config/gameConfig';
 import {
   BuildingAlreadyInProgressError,
+  ResearchQueueFullError,
   NotEnoughCreditsError,
   RequirementsNotMetError,
   TechnologyAlreadyInResearchError,
+  NoBuildingInConstructionError,
+  NoTechnologyInResearchError,
 } from './exceptions';
 
 @Injectable()
@@ -33,8 +39,74 @@ export class ResearchService implements OnModuleInit {
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
   ) {
+    this.finishResearch = this.finishResearch.bind(this);
     this.stats = gameConfigTechnologies;
     this.scheduler.addTaskResolver(this.finishResearch, 'research');
+  }
+
+  public async researchTechnology(baseId, technology: Technologies) {
+    await this.connection.transaction('REPEATABLE READ', async t => {
+      await this.researchTechnologyTransaction(
+        baseId,
+        technology,
+        t,
+        new Date(),
+      );
+    });
+  }
+
+  public async cancelResearch(baseId) {
+    await this.connection.transaction('REPEATABLE READ', async t => {
+      const base = await this.baseRepository.findOne(baseId);
+      const task = base.buildingTask;
+      const empire = base.empire;
+      if (task) {
+        task.status = TaskStatus.CANCELLED;
+        base.buildingTask = null;
+        const refund = this.calculateCost(
+          task.data.technology,
+          empire[task.data.technology] + 1,
+        );
+        empire.credits += refund;
+        await Promise.all([t.save(base), t.save(task), t.save(empire)]);
+      } else {
+        throw new NoTechnologyInResearchError();
+      }
+    });
+  }
+
+  public async queueResearch(baseId: number, technology: Technologies) {
+    try {
+      await this.connection.transaction(
+        'REPEATABLE READ',
+        async transaction => {
+          const base = await transaction.getRepository(Base).findOne(baseId);
+          const queue = base.researchQueue;
+          queue.push(technology);
+          await transaction.save(base);
+        },
+      );
+    } catch (err) {
+      if (err.message.includes('violates check constraint')) {
+        throw new ResearchQueueFullError();
+      }
+
+      throw err;
+    }
+  }
+
+  public async unqueueResearch(baseId: number, i: number) {
+    await this.baseRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        // @ts-ignore
+        researchQueue: () =>
+          // Postgres arrays are 1 indexed
+          `"researchQueue"[:${i}] || "researchQueue"[${i + 2}:]`,
+      })
+      .where({ id: baseId })
+      .execute();
   }
 
   private async finishResearch(finishTask: Task, catchup = false) {
@@ -81,7 +153,7 @@ export class ResearchService implements OnModuleInit {
       .select()
       .where({ status: TaskStatus.IN_PROGRESS, type: 'research' })
       .andWhere(
-        `"data" @> '{"technology": ${technology}}' AND "data" @> '{"empireId": ${empire.id}}'`,
+        `"data" @> '{"technology": "${technology}"}' AND "data" @> '{"empireId": ${empire.id}}'`,
       )
       .getMany();
 
@@ -97,6 +169,13 @@ export class ResearchService implements OnModuleInit {
 
     if (base[Buildings.RESEARCH_LABS] < labRequirement) {
       throw new RequirementsNotMetError();
+    }
+
+    for (const requirement of gameConfigTechnologies[technology].requirements
+      .technologies) {
+      if (empire[requirement.technology] < requirement.level) {
+        throw new RequirementsNotMetError();
+      }
     }
 
     try {
@@ -120,6 +199,7 @@ export class ResearchService implements OnModuleInit {
       technology,
       cost,
       baseId: base.id,
+      empireId: empire.id,
     };
 
     await transaction.save(task);
@@ -141,8 +221,11 @@ export class ResearchService implements OnModuleInit {
         throw new Error('Not in progress');
       }
 
-      const updateBase = transaction.update(Base, task.data.empireId, {
+      const updateBase = transaction.update(Base, task.data.baseId, {
         researchTask: null,
+      });
+
+      const updateEmpire = transaction.update(Empire, task.data.empireId, {
         [task.data.technology]: () => `"${task.data.technology}" + 1`,
       });
 
@@ -150,7 +233,7 @@ export class ResearchService implements OnModuleInit {
         status: TaskStatus.FINISHED,
       });
 
-      await Promise.all([updateBase, finish]);
+      await Promise.all([updateBase, updateEmpire, finish]);
     });
   }
 

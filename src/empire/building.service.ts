@@ -14,10 +14,10 @@ import { Task } from '../task/models/task.entity';
 import { SchedulerService } from '../scheduler/scheduler.service';
 import {
   BuildingAlreadyInProgressError,
-  BuildingQueueFullError,
   NoBuildingInConstructionError,
   NotEnoughCreditsError,
   RequirementsNotMetError,
+  BuildingQueueFullError,
 } from './exceptions';
 import { gameConfigGeneral, gameConfigStructures } from '../config/gameConfig';
 

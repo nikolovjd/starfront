@@ -37,9 +37,23 @@ export class BuildingQueueFullError extends ConflictException {
   }
 }
 
+export class ResearchQueueFullError extends ConflictException {
+  constructor() {
+    super('Research queue full');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
 export class NoBuildingInConstructionError extends ConflictException {
   constructor() {
     super('No building in construction');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+export class NoTechnologyInResearchError extends ConflictException {
+  constructor() {
+    super('No technology in research');
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
