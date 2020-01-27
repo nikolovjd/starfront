@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
-  "license": "MIT",
+  "license": "SEE LICENSE IN README.md",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
