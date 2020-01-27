@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Base } from './models/base.entity';
 import {
@@ -120,7 +125,10 @@ export class BuildingService implements OnModuleInit {
         },
       );
     } catch (err) {
-      if (err.message.includes('violates check constraint')) {
+      if (
+        !(err instanceof HttpException) &&
+        err.message.includes('violates check constraint')
+      ) {
         throw new BuildingQueueFullError();
       }
 
@@ -178,7 +186,10 @@ export class BuildingService implements OnModuleInit {
     try {
       await transaction.decrement(Empire, { id: empire.id }, 'credits', cost);
     } catch (err) {
-      if (err.message.includes('violates check constraint')) {
+      if (
+        !(err instanceof HttpException) &&
+        err.message.includes('violates check constraint')
+      ) {
         throw new NotEnoughCreditsError();
       }
 
@@ -276,9 +287,7 @@ export class BuildingService implements OnModuleInit {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(
-      start.getTime() + (cost / base.construction) * 60 * 60 * 1000,
-    );
+    return new Date(start.getTime() + 1000);
   }
 
   private verifyQueue(base: Base, queue: Buildings[]) {
