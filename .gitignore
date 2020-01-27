@@ -2,7 +2,11 @@
 config/game/general.json
 config/game/structures.json
 config/game/technologies.json
+config/system.json
 ormconfig.json
+
+# Dev DB
+postgres_data
 
 # compiled output
 /dist
