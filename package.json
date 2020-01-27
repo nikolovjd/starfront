@@ -3,15 +3,12 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
-  "license": "SEE LICENSE IN README.md",
-  "engines": {
-    "node": "12.x"
-  },
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "node_modules/@nestjs/cli/bin/nest.js build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "npm run prebuild && npm run build && nest start",
+    "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

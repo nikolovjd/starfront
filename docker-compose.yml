@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  server:
+    restart: always
+    build: ./
+    configs:
+      - source: system
+        target: /app/config/system.json
+      - source: general
+        target: /app/config/game/general.json
+      - source: structures
+        target: /app/config/game/structures.json
+      - source: technologies
+        target: /app/config/game/technologies.json
+      - source: ormconfig
+        target: /app/ormconfig.json
+    container_name: starfront
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+  db:
+    restart: always
+    container_name: starfront-db
+    image: "romeoz/docker-postgresql:11"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data/:/var/lib/postgresql
+    environment:
+      DB_NAME: "starfront"
+      DB_USER: "dev"
+      DB_PASS: "dev"
+      PG_TRUST_LOCALNET: "true"
