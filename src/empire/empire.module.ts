@@ -8,10 +8,11 @@ import { Task } from '../task/models/task.entity';
 import { SchedulerModule } from '../scheduler/scheduler.module';
 import { BaseController } from './base.controller';
 import { ResearchService } from './research.service';
+import { EmpireController } from './empire.controller';
 
 @Module({
   providers: [EmpireService, BuildingService, ResearchService],
-  controllers: [BaseController],
+  controllers: [BaseController, EmpireController],
   exports: [BuildingService, ResearchService],
   imports: [TypeOrmModule.forFeature([Empire, Base, Task]), SchedulerModule],
 })

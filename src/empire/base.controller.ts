@@ -37,8 +37,7 @@ export class BaseController {
   @ApiOkResponse({ type: Base, isArray: true })
   @ApiConflictResponse()
   async getBases(@Request() req) {
-    console.log(req.user);
-    return this.buildingService.getBasesForEmpireId(1);
+    return this.buildingService.getBasesForEmpireId(req.user.empireId);
   }
 
   @Get(':id')

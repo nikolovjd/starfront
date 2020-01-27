@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { Base } from './models/base.entity';
 import {
@@ -152,11 +152,16 @@ export class BuildingService implements OnModuleInit {
     start.setMilliseconds(0);
 
     const base = await transaction.getRepository(Base).findOne(baseId);
-    const empire = base.empire;
+
+    if (!base) {
+      throw new NotFoundException();
+    }
 
     if (base.buildingTask) {
       throw new BuildingAlreadyInProgressError();
     }
+
+    const empire = base.empire;
 
     const level = base[building] + 1;
     const cost = this.calculateCost(building, level);
