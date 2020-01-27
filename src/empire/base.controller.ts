@@ -7,12 +7,18 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
   UseInterceptors,
+  Request,
 } from '@nestjs/common';
 import { BuildingService } from './building.service';
 import { BuildBuildingRequestDto } from './request/build-building-request.dto';
 import { QueueBuildingRequestDto } from './request/queue-building-request.dto';
-import { ApiOkResponse, ApiConflictResponse } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiConflictResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Base } from './models/base.entity';
 import { DequeueBuildingRequestDto } from './request/dequeue-building-request.dto';
 import { DowngradeBuildingRequestDto } from './request/downgrade-building-request.dto';
@@ -20,8 +26,11 @@ import { ResearchService } from './research.service';
 import { ResearchTechnologyRequestDto } from './request/research-technology-request.dto';
 import { QueueResearchRequestDto } from './request/queue-research-request.dto';
 import { DequeueResearchRequestDto } from './request/dequeue-research-request.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('base')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
 export class BaseController {
   constructor(
@@ -32,8 +41,8 @@ export class BaseController {
   @Get()
   @ApiOkResponse({ type: Base, isArray: true })
   @ApiConflictResponse()
-  async getBases() {
-    return this.buildingService.getBasesForEmpireId(1);
+  async getBases(@Request() req) {
+    return this.buildingService.getBasesForEmpireId(2);
   }
 
   @Get(':id')

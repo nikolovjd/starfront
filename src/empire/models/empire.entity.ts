@@ -4,10 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Base } from './base.entity';
+import { User } from '../../user/models/user.entity';
 
 @Entity()
 @Check('"credits" >= 0')
@@ -15,6 +18,10 @@ import { Base } from './base.entity';
 export class Empire extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToOne(type => User, { nullable: false })
+  @JoinColumn()
+  user: User;
 
   @Column({ default: 100 })
   credits: number;

@@ -35,7 +35,7 @@ export class Base extends BaseEntity {
   @ManyToOne(
     type => Empire,
     empire => empire.bases,
-    { eager: true },
+    { eager: true, nullable: false },
   )
   empire: Empire;
 
