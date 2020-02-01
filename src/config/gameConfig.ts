@@ -1,7 +1,4 @@
 /* tslint:disable:line:no-var-requires */
-const general = require('../../config/game/general.json');
-const structures = require('../../config/game/structures.json');
-const technologies = require('../../config/game/technologies.json');
 import { BaseStats, Buildings, Technologies } from '../types';
 
 interface TechnologyRequirement {
@@ -65,6 +62,13 @@ type GameConfigTechnologies = {
   [key in Technologies]?: TechnologyStats;
 };
 
-export const gameConfigStructures = structures as GameConfigStructures;
-export const gameConfigGeneral = general as GameConfigGeneral;
-export const gameConfigTechnologies = technologies as GameConfigTechnologies;
+export const gameConfigStructures = JSON.parse(
+  process.env.structuresConfig,
+) as GameConfigStructures;
+export const gameConfigGeneral = JSON.parse(
+  process.env.generalConfig,
+) as GameConfigGeneral;
+export const gameConfigTechnologies = JSON.parse(
+  process.env.technologiesConfig,
+) as GameConfigTechnologies;
+export const ormConfig = JSON.parse(process.env.ormConfig);

@@ -4,20 +4,9 @@ services:
   server:
     restart: always
     build: ./
-    configs:
-      - source: system
-        target: /app/config/system.json
-      - source: general
-        target: /app/config/game/general.json
-      - source: structures
-        target: /app/config/game/structures.json
-      - source: technologies
-        target: /app/config/game/technologies.json
-      - source: ormconfig
-        target: /app/ormconfig.json
+    env_file:
+      - config/config.env
     container_name: starfront
-    volumes:
-      - ./:/app
     ports:
       - 3000:3000
   db:
