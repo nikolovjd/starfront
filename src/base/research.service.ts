@@ -8,7 +8,7 @@ import {
   Repository,
 } from 'typeorm';
 import { SchedulerService } from '../scheduler/scheduler.service';
-import { Base } from '../base/models/base.entity';
+import { Base } from './models/base.entity';
 import { Task } from '../task/models/task.entity';
 import { Buildings, TaskStatus, Technologies } from '../types';
 import { gameConfigTechnologies } from '../config/gameConfig';
@@ -29,8 +29,6 @@ export class ResearchService implements OnModuleInit {
     private readonly scheduler: SchedulerService,
     @InjectRepository(Base)
     private readonly baseRepository: Repository<Base>,
-    @InjectRepository(Empire)
-    private readonly empireRepository: Repository<Empire>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
   ) {

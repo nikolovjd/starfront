@@ -3,6 +3,7 @@ config/config.env
 config/game/general.json
 config/game/structures.json
 config/game/technologies.json
+config/game/ships.json
 config/system.json
 ormconfig.json
 env.sh

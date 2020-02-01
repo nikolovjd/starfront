@@ -1,0 +1,418 @@
+{
+  "fighter": {
+    "cost": 5,
+    "requirements": {
+      "shipyards": 1,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "laser",
+          "level": 1
+        }
+      ]
+    }
+  },
+  "bomber": {
+    "cost": 10,
+    "requirements": {
+      "shipyards": 2,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "missiles",
+          "level": 1
+        }
+      ]
+    }
+  },
+  "heavyBomber": {
+    "cost": 30,
+    "requirements": {
+      "shipyards": 3,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "plasma",
+          "level": 14
+        }
+      ]
+    }
+  },
+  "ionBomber": {
+    "cost": 60,
+    "requirements": {
+      "shipyards": 3,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "ion",
+          "level": 10
+        },
+        {
+          "technology": "shielding",
+          "level": 10
+        }
+      ]
+    }
+  },
+  "corvette": {
+    "cost": 20,
+    "requirements": {
+      "shipyards": 4,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "laser",
+          "level": 2
+        },
+        {
+          "technology": "stellarDrive",
+          "level": 1
+        },
+        {
+          "technology": "armour",
+          "level": 2
+        }
+      ]
+    }
+  },
+  "recycler": {
+    "cost": 30,
+    "requirements": {
+      "shipyards": 5,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "laser",
+          "level": 1
+        },
+        {
+          "technology": "stellarDrive",
+          "level": 1
+        },
+        {
+          "technology": "armour",
+          "level": 2
+        }
+      ]
+    }
+  },
+  "destroyer": {
+    "cost": 40,
+    "requirements": {
+      "shipyards": 6,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "plasma",
+          "level": 1
+        },
+        {
+          "technology": "stellarDrive",
+          "level": 2
+        },
+        {
+          "technology": "armour",
+          "level": 6
+        }
+      ]
+    }
+  },
+  "frigate": {
+    "cost": 80,
+    "requirements": {
+      "shipyards": 8,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "missiles",
+          "level": 6
+        },
+        {
+          "technology": "stellarDrive",
+          "level": 4
+        },
+        {
+          "technology": "armour",
+          "level": 8
+        }
+      ]
+    }
+  },
+  "ionFrigate": {
+    "cost": 120,
+    "requirements": {
+      "shipyards": 8,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "ion",
+          "level": 10
+        },
+        {
+          "technology": "stellarDrive",
+          "level": 4
+        },
+        {
+          "technology": "armour",
+          "level": 8
+        },
+        {
+          "technology": "shielding",
+          "level": 10
+        }
+      ]
+    }
+  },
+  "scoutShip": {
+    "cost": 40,
+    "requirements": {
+      "shipyards": 4,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "warpDrive",
+          "level": 1
+        }
+      ]
+    }
+  },
+  "outpostShip": {
+    "cost": 100,
+    "requirements": {
+      "shipyards": 8,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "warpDrive",
+          "level": 1
+        }
+      ]
+    }
+  },
+  "cruiser": {
+    "cost": 200,
+    "requirements": {
+      "shipyards": 10,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "plasma",
+          "level": 4
+        },
+        {
+          "technology": "warpDrive",
+          "level": 2
+        },
+        {
+          "technology": "armour",
+          "level": 10
+        },
+        {
+          "technology": "shielding",
+          "level": 2
+        }
+      ]
+    }
+  },
+  "carrier": {
+    "cost": 400,
+    "requirements": {
+      "shipyards": 12,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "missiles",
+          "level": 6
+        },
+        {
+          "technology": "warpDrive",
+          "level": 4
+        },
+        {
+          "technology": "armour",
+          "level": 10
+        },
+        {
+          "technology": "shielding",
+          "level": 2
+        }
+      ]
+    }
+  },
+  "heavyCruiser": {
+    "cost": 500,
+    "requirements": {
+      "shipyards": 12,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "plasma",
+          "level": 6
+        },
+        {
+          "technology": "warpDrive",
+          "level": 4
+        },
+        {
+          "technology": "armour",
+          "level": 12
+        },
+        {
+          "technology": "shielding",
+          "level": 4
+        }
+      ]
+    }
+  },
+  "battleship": {
+    "cost": 2000,
+    "requirements": {
+      "shipyards": 16,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "ion",
+          "level": 6
+        },
+        {
+          "technology": "warpDrive",
+          "level": 8
+        },
+        {
+          "technology": "armour",
+          "level": 16
+        },
+        {
+          "technology": "shielding",
+          "level": 8
+        }
+      ]
+    }
+  },
+  "fleetCarrier": {
+    "cost": 2500,
+    "requirements": {
+      "shipyards": 16,
+      "orbitalShipyards": 0,
+      "technologies": [
+        {
+          "technology": "ion",
+          "level": 4
+        },
+        {
+          "technology": "warpDrive",
+          "level": 8
+        },
+        {
+          "technology": "armour",
+          "level": 14
+        },
+        {
+          "technology": "shielding",
+          "level": 6
+        }
+      ]
+    }
+  },
+  "dreadnought": {
+    "cost": 10000,
+    "requirements": {
+      "shipyards": 20,
+      "orbitalShipyards": 1,
+      "technologies": [
+        {
+          "technology": "photon",
+          "level": 6
+        },
+        {
+          "technology": "warpDrive",
+          "level": 12
+        },
+        {
+          "technology": "armour",
+          "level": 20
+        },
+        {
+          "technology": "shielding",
+          "level": 10
+        }
+      ]
+    }
+  },
+  "titan": {
+    "cost": 50000,
+    "requirements": {
+      "shipyards": 22,
+      "orbitalShipyards": 3,
+      "technologies": [
+        {
+          "technology": "disruptor",
+          "level": 6
+        },
+        {
+          "technology": "warpDrive",
+          "level": 14
+        },
+        {
+          "technology": "armour",
+          "level": 22
+        },
+        {
+          "technology": "shielding",
+          "level": 14
+        }
+      ]
+    }
+  },
+  "leviathan": {
+    "cost": 200000,
+    "requirements": {
+      "shipyards": 24,
+      "orbitalShipyards": 5,
+      "technologies": [
+        {
+          "technology": "photon",
+          "level": 12
+        },
+        {
+          "technology": "warpDrive",
+          "level": 18
+        },
+        {
+          "technology": "armour",
+          "level": 24
+        },
+        {
+          "technology": "shielding",
+          "level": 16
+        }
+      ]
+    }
+  },
+  "deathStar": {
+    "cost": 500000,
+    "requirements": {
+      "shipyards": 26,
+      "orbitalShipyards": 7,
+      "technologies": [
+        {
+          "technology": "disruptor",
+          "level": 10
+        },
+        {
+          "technology": "warpDrive",
+          "level": 20
+        },
+        {
+          "technology": "armour",
+          "level": 26
+        },
+        {
+          "technology": "shielding",
+          "level": 18
+        }
+      ]
+    }
+  }
+}

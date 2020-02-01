@@ -8,7 +8,6 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ormConfig } from './config/gameConfig';
 import { BaseModule } from './base/base.module';
-import { ResearchModule } from './research/research.module';
 
 @Module({
   imports: [
@@ -20,7 +19,6 @@ import { ResearchModule } from './research/research.module';
     AuthModule,
     UserModule,
     BaseModule,
-    ResearchModule,
   ],
 })
 export class AppModule {}

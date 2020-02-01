@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Base } from '../base/models/base.entity';
+import { Base } from './models/base.entity';
 import {
   Connection,
   EntityManager,
@@ -14,7 +14,7 @@ import {
   Repository,
 } from 'typeorm';
 import { Buildings, TaskStatus } from '../types';
-import { Empire } from './models/empire.entity';
+import { Empire } from '../empire/models/empire.entity';
 import { Task } from '../task/models/task.entity';
 import { SchedulerService } from '../scheduler/scheduler.service';
 import {
@@ -23,7 +23,7 @@ import {
   NotEnoughCreditsError,
   RequirementsNotMetError,
   BuildingQueueFullError,
-} from './exceptions';
+} from '../empire/exceptions';
 import { gameConfigGeneral, gameConfigStructures } from '../config/gameConfig';
 
 @Injectable()
@@ -34,8 +34,6 @@ export class BuildingService implements OnModuleInit {
     private readonly scheduler: SchedulerService,
     @InjectRepository(Base)
     private readonly baseRepository: Repository<Base>,
-    @InjectRepository(Empire)
-    private readonly empireRepository: Repository<Empire>,
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
   ) {

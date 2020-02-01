@@ -9,16 +9,16 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { BuildingService } from './building.service';
-import { BuildBuildingRequestDto } from './request/build-building-request.dto';
-import { QueueBuildingRequestDto } from './request/queue-building-request.dto';
+import { BuildBuildingRequestDto } from '../empire/request/build-building-request.dto';
+import { QueueBuildingRequestDto } from '../empire/request/queue-building-request.dto';
 import {
   ApiOkResponse,
   ApiConflictResponse,
   ApiBearerAuth,
   ApiTags,
 } from '@nestjs/swagger';
-import { DequeueBuildingRequestDto } from './request/dequeue-building-request.dto';
-import { DowngradeBuildingRequestDto } from './request/downgrade-building-request.dto';
+import { DequeueBuildingRequestDto } from '../empire/request/dequeue-building-request.dto';
+import { DowngradeBuildingRequestDto } from '../empire/request/downgrade-building-request.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Building')
