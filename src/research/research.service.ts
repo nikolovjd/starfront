@@ -8,23 +8,18 @@ import {
   Repository,
 } from 'typeorm';
 import { SchedulerService } from '../scheduler/scheduler.service';
-import { Base } from './models/base.entity';
-import { Empire } from './models/empire.entity';
+import { Base } from '../base/models/base.entity';
 import { Task } from '../task/models/task.entity';
 import { Buildings, TaskStatus, Technologies } from '../types';
+import { gameConfigTechnologies } from '../config/gameConfig';
 import {
-  gameConfigGeneral,
-  gameConfigTechnologies,
-} from '../config/gameConfig';
-import {
-  BuildingAlreadyInProgressError,
   ResearchQueueFullError,
   NotEnoughCreditsError,
   RequirementsNotMetError,
   TechnologyAlreadyInResearchError,
-  NoBuildingInConstructionError,
   NoTechnologyInResearchError,
 } from './exceptions';
+import { Empire } from '../empire/models/empire.entity';
 
 @Injectable()
 export class ResearchService implements OnModuleInit {
@@ -58,11 +53,11 @@ export class ResearchService implements OnModuleInit {
   public async cancelResearch(baseId) {
     await this.connection.transaction('REPEATABLE READ', async t => {
       const base = await this.baseRepository.findOne(baseId);
-      const task = base.buildingTask;
+      const task = base.researchTask;
       const empire = base.empire;
       if (task) {
         task.status = TaskStatus.CANCELLED;
-        base.buildingTask = null;
+        base.researchTask = null;
         const refund = this.calculateCost(
           task.data.technology,
           empire[task.data.technology] + 1,
@@ -96,7 +91,7 @@ export class ResearchService implements OnModuleInit {
   }
 
   public async unqueueResearch(baseId: number, i: number) {
-    await this.baseRepository
+    return this.baseRepository
       .createQueryBuilder()
       .update()
       .set({
@@ -144,7 +139,7 @@ export class ResearchService implements OnModuleInit {
     const empire = base.empire;
 
     if (base.researchTask) {
-      throw new BuildingAlreadyInProgressError();
+      throw new TechnologyAlreadyInResearchError();
     }
 
     const tasks = await transaction

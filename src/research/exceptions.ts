@@ -2,23 +2,9 @@
 
 import { ConflictException } from '@nestjs/common';
 
-export class BuildingAlreadyInProgressError extends ConflictException {
-  constructor() {
-    super('Building already in progress');
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
 export class NotEnoughCreditsError extends ConflictException {
   constructor() {
     super('Not enough credits');
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
-export class EmpireAlreadyExistsError extends ConflictException {
-  constructor() {
-    super('Empire already exists');
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
@@ -37,23 +23,9 @@ export class TechnologyAlreadyInResearchError extends ConflictException {
   }
 }
 
-export class BuildingQueueFullError extends ConflictException {
-  constructor() {
-    super('Building queue full');
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
 export class ResearchQueueFullError extends ConflictException {
   constructor() {
     super('Research queue full');
-    Object.setPrototypeOf(this, new.target.prototype);
-  }
-}
-
-export class NoBuildingInConstructionError extends ConflictException {
-  constructor() {
-    super('No building in construction');
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }

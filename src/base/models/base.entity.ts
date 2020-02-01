@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Empire } from './empire.entity';
+import { Empire } from '../../empire/models/empire.entity';
 import { Buildings, Technologies } from '../../types';
 import { Task } from '../../task/models/task.entity';
 import {

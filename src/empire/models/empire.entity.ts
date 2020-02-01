@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Base } from './base.entity';
+import { Base } from '../../base/models/base.entity';
 import { User } from '../../user/models/user.entity';
 
 @Entity()

@@ -7,6 +7,8 @@ import { IncomeModule } from './income/income.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ormConfig } from './config/gameConfig';
+import { BaseModule } from './base/base.module';
+import { ResearchModule } from './research/research.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { ormConfig } from './config/gameConfig';
     IncomeModule,
     AuthModule,
     UserModule,
+    BaseModule,
+    ResearchModule,
   ],
 })
 export class AppModule {}

@@ -1,18 +1,19 @@
-import { Controller } from '@nestjs/common';
-import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
-import { Empire } from './models/empire.entity';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { EmpireService } from './empire.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Empire')
 @Controller('empire')
+@UseGuards(AuthGuard())
+@ApiBearerAuth()
 export class EmpireController {
-  constructor(
-    @InjectConnection() private readonly connection: Connection,
-    @InjectRepository(Empire)
-    private readonly empireRepository: Repository<Empire>,
-  ) {}
+  constructor(private readonly empireService: EmpireService) {}
 
-  // TODO: base location, etc
-  async startEmpire(userId: number) {
-    // TODO
+  @Post()
+  async create(@Req() request: any) {
+    const empire = this.empireService.create(request.user.id);
+    // TODO: make base
+    return empire;
   }
 }

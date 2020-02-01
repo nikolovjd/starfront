@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { Base } from './models/base.entity';
+import { Base } from '../base/models/base.entity';
 import {
   Connection,
   EntityManager,
