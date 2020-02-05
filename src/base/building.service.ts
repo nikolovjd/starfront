@@ -70,6 +70,22 @@ export class BuildingService implements OnModuleInit {
         throw new NoBuildingInConstructionError();
       }
     });
+
+    await this.connection.transaction('REPEATABLE READ', async transaction => {
+      const base = await transaction.getRepository(Base).findOne(baseId);
+
+      if (base.buildingQueue.length) {
+        const building = base.buildingQueue.shift();
+        await transaction.save(base);
+        return this.buildBuildingTransaction(
+          base.id,
+          building,
+          transaction,
+          new Date(),
+          false,
+        );
+      }
+    });
   }
 
   public async deleteBuilding(baseId, building: Buildings) {
@@ -108,6 +124,13 @@ export class BuildingService implements OnModuleInit {
   }
 
   public async queueBuilding(baseId: number, building: Buildings) {
+    try {
+      await this.buildBuilding(baseId, building);
+      return;
+    } catch (err) {
+      // nothing
+    }
+
     try {
       await this.connection.transaction(
         'REPEATABLE READ',
@@ -149,7 +172,7 @@ export class BuildingService implements OnModuleInit {
   }
 
   private async buildBuildingTransaction(
-    baseId,
+    baseId: number,
     building: Buildings,
     transaction: EntityManager,
     start: Date,
@@ -216,6 +239,31 @@ export class BuildingService implements OnModuleInit {
     }
 
     return task;
+  }
+
+  public async tryBuildQueuedBuilding(baseId) {
+    try {
+      await this.connection.transaction(
+        'REPEATABLE READ',
+        async transaction => {
+          const base = await transaction.getRepository(Base).findOne(baseId);
+
+          if (base.buildingQueue.length) {
+            const building = base.buildingQueue.shift();
+            await transaction.save(base);
+            return this.buildBuildingTransaction(
+              baseId,
+              building,
+              transaction,
+              new Date(),
+              false,
+            );
+          }
+        },
+      );
+    } catch {
+      // nothing
+    }
   }
 
   private async finishBuilding(finishTask: Task, catchup = false) {
@@ -285,7 +333,9 @@ export class BuildingService implements OnModuleInit {
   }
 
   private getEndTime(base: Base, start: Date, cost: number) {
-    return new Date(start.getTime() + 1000);
+    return new Date(
+      start.getTime() + (cost / base.construction) * 60 * 60 * 1000,
+    );
   }
 
   private verifyQueue(base: Base, queue: Buildings[]) {

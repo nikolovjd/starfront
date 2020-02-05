@@ -28,13 +28,15 @@ import { AuthGuard } from '@nestjs/passport';
 export class BaseController {
   constructor(private readonly baseService: BaseService) {}
   @Post()
-  async createBase() {}
+  async createBase(@Request() req) {
+    return this.baseService.createBase(req.user.id);
+  }
 
   @Get()
   @ApiOkResponse({ type: Base, isArray: true })
   @ApiConflictResponse()
   async getBases(@Request() req) {
-    return this.baseService.getBasesForEmpireId(req.user.id);
+    return this.baseService.getBasesForEmpireId(req.user.empireId);
   }
 
   @Get(':id')

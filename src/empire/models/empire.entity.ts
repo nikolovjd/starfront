@@ -19,7 +19,11 @@ export class Empire extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(type => User, { nullable: false })
+  @OneToOne(
+    type => User,
+    user => user.empire,
+    { nullable: false, eager: true },
+  )
   @JoinColumn()
   user: User;
 

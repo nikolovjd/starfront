@@ -14,5 +14,6 @@ import { ResearchController } from './research.controller';
   controllers: [BaseController, BuildingController, ResearchController],
   providers: [BaseService, BuildingService, ResearchService],
   imports: [TypeOrmModule.forFeature([Base, Task]), SchedulerModule],
+  exports: [BaseService, BuildingService, ResearchService],
 })
 export class BaseModule {}

@@ -82,12 +82,12 @@ export class Base extends BaseEntity {
 
   @Expose()
   @ApiProperty()
-  @Column({ default: 3 })
+  @Column({ default: 36 })
   public metal: number;
 
   @Expose()
   @ApiProperty()
-  @Column({ default: 3 })
+  @Column({ default: 24 })
   public crystal: number;
 
   @Expose()
@@ -144,6 +144,9 @@ export class Base extends BaseEntity {
   @AfterLoad()
   getComputedStats() {
     // NOTE: fertility NEEDS to be first since its used for calculating population
+    if (!this.empire) {
+      return;
+    }
     this.fertility = this.calculateTotalStat('fertility');
     this.area = this.calculateTotalStat('area');
     this.usedArea = this.calculateUsedStat('area');

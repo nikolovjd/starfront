@@ -102,6 +102,31 @@ export class ResearchService implements OnModuleInit {
       .execute();
   }
 
+  public async tryReseatchingQueuedResearch(baseId) {
+    try {
+      await this.connection.transaction(
+        'REPEATABLE READ',
+        async transaction => {
+          const base = await transaction.getRepository(Base).findOne(baseId);
+
+          if (base.buildingQueue.length) {
+            const technology = base.researchQueue.shift();
+            await transaction.save(base);
+            return this.researchTechnologyTransaction(
+              baseId,
+              technology,
+              transaction,
+              new Date(),
+              false,
+            );
+          }
+        },
+      );
+    } catch {
+      // nothing
+    }
+  }
+
   private async finishResearch(finishTask: Task, catchup = false) {
     await this.finishTask(finishTask);
 
